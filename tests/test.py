@@ -6,7 +6,6 @@
   4. Los métodos de conveniencia devuelven lo esperado.
 
 """
-
 from config.logging_config import configure_logging, get_logger
 from config.settings import settings
 from models import (
@@ -139,13 +138,13 @@ def probar_evaluation_result() -> None:
 
 
 def main() -> None:
-    print("\n=== Verificación del Día 1 ===\n")
+    print("\n=== Verificación ===\n")
     probar_configuracion()
     probar_logging()
     probar_schema_context()
     probar_dax_query()
     probar_evaluation_result()
-    print("\n=== TODO OK: el Día 1 quedó funcionando correctamente ===\n")
+    print("\n=== TODO OK ===")
 
 
 if __name__ == "__main__":
