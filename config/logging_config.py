@@ -10,10 +10,6 @@ from config.settings import settings
 def configure_logging() -> None:
     """
     Configura structlog una sola vez, al arrancar la aplicación.
-
-    Deja los logs en formato legible por humanos durante el desarrollo. Más
-    adelante, si quisieras, podrías cambiar a formato JSON para procesarlos
-    automáticamente.
     """
     logging.basicConfig(
         format="%(message)s",
