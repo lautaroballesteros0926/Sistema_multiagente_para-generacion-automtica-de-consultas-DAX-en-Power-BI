@@ -8,5 +8,8 @@ structlog>=24.1.0
 fastmcp>=2.0.0
 pytest>=8.0.0
 pytest-asyncio>=0.24.0
+pytest-mock>=3.14.0
+openai>=1.30.0
+tenacity>=8.2.0
 
 

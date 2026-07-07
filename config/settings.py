@@ -44,6 +44,11 @@ class Settings(BaseSettings):
     generator_temperature: float = 0.2    # Baja: respuestas precisas y estables
     evaluator_temperature: float = 0.0    # Cero: evaluación determinista y consistente
 
+    # URL base opcional para el cliente OpenAI. None = endpoint real de OpenAI.
+    # Permite apuntar el mismo AsyncOpenAI a un servidor compatible (p. ej.
+    # Ollama en http://localhost:11434/v1) sin tocar el código de los agentes.
+    openai_base_url: str | None = None
+
     # =========================================================================
     # 2) Power BI / Azure AD
     #    Solo se usan cuando USE_MOCK = False. trabajare con datos simulados por ahora.
