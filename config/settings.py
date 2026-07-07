@@ -38,16 +38,21 @@ class Settings(BaseSettings):
     # =========================================================================
     # 1) OpenAI (el LLM que usan los agentes)
     # =========================================================================
-    openai_api_key: str = ""
-    openai_model: str = "gpt-4o"          # Modelo para el generador
-    evaluator_model: str = "gpt-4o"       # Modelo para el evaluador (puede ser distinto)
+    # Rama experimental: por defecto apunta a un modelo LOCAL vía Ollama
+    # (sin costo, sin API key) en vez de a OpenAI. Basta con tener
+    # `ollama serve` corriendo y el modelo descargado (`ollama pull llama3.1`).
+    # Para usar OpenAI real en esta misma rama, sobreescribe estas tres
+    # variables en tu `.env`.
+    openai_api_key: str = "ollama-local"
+    openai_model: str = "llama3.1"        # Modelo para el generador
+    evaluator_model: str = "llama3.1"     # Modelo para el evaluador (puede ser distinto)
     generator_temperature: float = 0.2    # Baja: respuestas precisas y estables
     evaluator_temperature: float = 0.0    # Cero: evaluación determinista y consistente
 
-    # URL base opcional para el cliente OpenAI. None = endpoint real de OpenAI.
-    # Permite apuntar el mismo AsyncOpenAI a un servidor compatible (p. ej.
-    # Ollama en http://localhost:11434/v1) sin tocar el código de los agentes.
-    openai_base_url: str | None = None
+    # URL base para el cliente OpenAI. None = endpoint real de OpenAI.
+    # Acá por defecto apunta al endpoint OpenAI-compatible de Ollama, lo que
+    # permite reusar el mismo AsyncOpenAI sin tocar el código de los agentes.
+    openai_base_url: str | None = "http://localhost:11434/v1"
 
     # =========================================================================
     # 2) Power BI / Azure AD

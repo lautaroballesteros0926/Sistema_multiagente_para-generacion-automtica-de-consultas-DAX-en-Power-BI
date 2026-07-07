@@ -1,5 +1,17 @@
 # Sistema multiagente para generación y validación de consultas DAX
 
+> **Rama experimental `experiment/local-llm-ollama`:** el generador y el
+> evaluador corren por defecto contra un modelo **local** servido por
+> [Ollama](https://ollama.com) (`llama3.1`, vía su endpoint OpenAI-compatible
+> en `http://localhost:11434/v1`), en vez de OpenAI real. No requiere
+> `OPENAI_API_KEY` ni conexión a internet — solo tener `ollama serve` activo
+> y el modelo descargado (`ollama pull llama3.1`). El objetivo es probar el
+> pipeline completo sin costo ni dependencia de un proveedor cloud; la
+> calidad del DAX generado es menor que con `gpt-4o` (ver
+> `results/baseline.json` de esta rama). Para usar OpenAI real en esta misma
+> rama, sobreescribe `OPENAI_MODEL`, `OPENAI_API_KEY` y `OPENAI_BASE_URL`
+> (vacío) en tu `.env`.
+
 Sistema que convierte preguntas en lenguaje natural en consultas DAX validadas
 para un modelo semántico de Power BI, usando dos agentes basados en LLM (un
 **generador** y un **evaluador** bajo el paradigma *LLM-as-a-Judge*) que se
