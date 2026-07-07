@@ -1,0 +1,142 @@
+[
+  {
+    "id": "q01",
+    "question": "¿Cuál es el total de ventas por categoría de producto?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Productos[Categoria], \"Total Ventas\", [Total Ventas])",
+    "category": "agregacion_simple",
+    "validation_criteria": ["usa Productos[Categoria]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q02",
+    "question": "¿Cuántas unidades se vendieron en total?",
+    "expected_dax": "EVALUATE ROW(\"Cantidad Total\", [Cantidad Total])",
+    "category": "agregacion_simple",
+    "validation_criteria": ["usa medida [Cantidad Total]"]
+  },
+  {
+    "id": "q03",
+    "question": "¿Cuál es el importe total vendido por tienda?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Tiendas[NombreTienda], \"Total Ventas\", [Total Ventas])",
+    "category": "agregacion_simple",
+    "validation_criteria": ["usa Tiendas[NombreTienda]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q04",
+    "question": "¿Cuál es el precio unitario promedio de los productos?",
+    "expected_dax": "EVALUATE ROW(\"Precio Promedio\", AVERAGE(Productos[PrecioUnitario]))",
+    "category": "agregacion_simple",
+    "validation_criteria": ["usa AVERAGE", "usa Productos[PrecioUnitario]"]
+  },
+  {
+    "id": "q05",
+    "question": "¿Cuál es el total de ventas de la categoría 'Electrónica'?",
+    "expected_dax": "EVALUATE CALCULATE([Total Ventas], Productos[Categoria] = \"Electrónica\")",
+    "category": "agregacion_con_filtro",
+    "validation_criteria": ["usa CALCULATE", "filtra Productos[Categoria]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q06",
+    "question": "¿Cuántas ventas tuvo el cliente con segmento 'Premium'?",
+    "expected_dax": "EVALUATE ROW(\"Cantidad Total\", CALCULATE([Cantidad Total], Clientes[SegmentoCliente] = \"Premium\"))",
+    "category": "agregacion_con_filtro",
+    "validation_criteria": ["usa CALCULATE", "filtra Clientes[SegmentoCliente]"]
+  },
+  {
+    "id": "q07",
+    "question": "¿Cuál es el total de ventas de tiendas ubicadas en la región 'Norte'?",
+    "expected_dax": "EVALUATE ROW(\"Total Ventas\", CALCULATE([Total Ventas], Tiendas[Region] = \"Norte\"))",
+    "category": "agregacion_con_filtro",
+    "validation_criteria": ["usa CALCULATE", "filtra Tiendas[Region]"]
+  },
+  {
+    "id": "q08",
+    "question": "¿Cuál es el ticket promedio de las ventas realizadas en el año 2024?",
+    "expected_dax": "EVALUATE ROW(\"Ticket Promedio\", CALCULATE([Ticket Promedio], Calendario[Anio] = 2024))",
+    "category": "agregacion_con_filtro",
+    "validation_criteria": ["usa CALCULATE", "filtra Calendario[Anio]", "usa medida [Ticket Promedio]"]
+  },
+  {
+    "id": "q09",
+    "question": "¿Cuáles fueron las ventas del año anterior comparadas con el actual?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Calendario[Anio], \"Total Ventas\", [Total Ventas], \"Ventas Anio Anterior\", [Ventas Anio Anterior])",
+    "category": "inteligencia_temporal",
+    "validation_criteria": ["usa medida [Ventas Anio Anterior]", "usa Calendario[Anio]"]
+  },
+  {
+    "id": "q10",
+    "question": "¿Cómo evolucionaron las ventas totales por trimestre?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Calendario[Anio], Calendario[Trimestre], \"Total Ventas\", [Total Ventas])",
+    "category": "inteligencia_temporal",
+    "validation_criteria": ["usa Calendario[Trimestre]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q11",
+    "question": "¿Cuál fue el crecimiento de ventas respecto al mismo período del año anterior?",
+    "expected_dax": "EVALUATE ROW(\"Total Ventas\", [Total Ventas], \"Ventas Anio Anterior\", [Ventas Anio Anterior])",
+    "category": "inteligencia_temporal",
+    "validation_criteria": ["usa medida [Ventas Anio Anterior]", "usa SAMEPERIODLASTYEAR (vía medida existente)"]
+  },
+  {
+    "id": "q12",
+    "question": "¿Cuál es el total de ventas mensuales del año 2023?",
+    "expected_dax": "EVALUATE CALCULATETABLE(SUMMARIZECOLUMNS(Calendario[Mes], \"Total Ventas\", [Total Ventas]), Calendario[Anio] = 2023)",
+    "category": "inteligencia_temporal",
+    "validation_criteria": ["usa Calendario[Mes]", "filtra Calendario[Anio]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q13",
+    "question": "¿Cuál es el total de ventas por producto y ciudad del cliente que lo compró?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Productos[NombreProducto], Clientes[Ciudad], \"Total Ventas\", [Total Ventas])",
+    "category": "cruce_tablas",
+    "validation_criteria": ["cruza Ventas-Productos-Clientes", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q14",
+    "question": "¿Qué categorías de producto se vendieron más en cada región de tienda?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Tiendas[Region], Productos[Categoria], \"Total Ventas\", [Total Ventas])",
+    "category": "cruce_tablas",
+    "validation_criteria": ["cruza Ventas-Tiendas-Productos", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q15",
+    "question": "¿Cuál es el total de ventas por país del cliente y año de la venta?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Clientes[Pais], Calendario[Anio], \"Total Ventas\", [Total Ventas])",
+    "category": "cruce_tablas",
+    "validation_criteria": ["cruza Ventas-Clientes-Calendario", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q16",
+    "question": "¿Qué tienda vendió más unidades por subcategoría de producto?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Tiendas[NombreTienda], Productos[Subcategoria], \"Cantidad Total\", [Cantidad Total])",
+    "category": "cruce_tablas",
+    "validation_criteria": ["cruza Ventas-Tiendas-Productos", "usa medida [Cantidad Total]"]
+  },
+  {
+    "id": "q17",
+    "question": "¿Cuál es el ticket promedio por categoría de producto?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Productos[Categoria], \"Ticket Promedio\", [Ticket Promedio])",
+    "category": "reutilizacion_medidas",
+    "validation_criteria": ["usa medida [Ticket Promedio]", "usa Productos[Categoria]"]
+  },
+  {
+    "id": "q18",
+    "question": "¿Cuál es la cantidad total vendida y el total de ventas por tienda?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Tiendas[NombreTienda], \"Cantidad Total\", [Cantidad Total], \"Total Ventas\", [Total Ventas])",
+    "category": "reutilizacion_medidas",
+    "validation_criteria": ["usa medida [Cantidad Total]", "usa medida [Total Ventas]"]
+  },
+  {
+    "id": "q19",
+    "question": "¿Cómo se compara el ticket promedio actual con el de ventas del año anterior por categoría?",
+    "expected_dax": "EVALUATE SUMMARIZECOLUMNS(Productos[Categoria], \"Ticket Promedio\", [Ticket Promedio], \"Ventas Anio Anterior\", [Ventas Anio Anterior])",
+    "category": "reutilizacion_medidas",
+    "validation_criteria": ["usa medida [Ticket Promedio]", "usa medida [Ventas Anio Anterior]"]
+  },
+  {
+    "id": "q20",
+    "question": "¿Cuál es el total de ventas, la cantidad total y el ticket promedio general del negocio?",
+    "expected_dax": "EVALUATE ROW(\"Total Ventas\", [Total Ventas], \"Cantidad Total\", [Cantidad Total], \"Ticket Promedio\", [Ticket Promedio])",
+    "category": "reutilizacion_medidas",
+    "validation_criteria": ["usa las tres medidas existentes sin recalcular"]
+  }
+]

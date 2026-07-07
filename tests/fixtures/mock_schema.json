@@ -1,0 +1,72 @@
+{
+  "tables": [
+    {
+      "name": "Ventas",
+      "table_type": "fact",
+      "columns": [
+        {"name": "IdVenta", "data_type": "int64", "is_key": true},
+        {"name": "IdProducto", "data_type": "int64", "is_key": false},
+        {"name": "IdCliente", "data_type": "int64", "is_key": false},
+        {"name": "IdTienda", "data_type": "int64", "is_key": false},
+        {"name": "IdFecha", "data_type": "int64", "is_key": false},
+        {"name": "Cantidad", "data_type": "int64", "is_key": false},
+        {"name": "ImporteTotal", "data_type": "decimal", "is_key": false}
+      ]
+    },
+    {
+      "name": "Productos",
+      "table_type": "dimension",
+      "columns": [
+        {"name": "IdProducto", "data_type": "int64", "is_key": true},
+        {"name": "NombreProducto", "data_type": "string", "is_key": false},
+        {"name": "Categoria", "data_type": "string", "is_key": false},
+        {"name": "Subcategoria", "data_type": "string", "is_key": false},
+        {"name": "PrecioUnitario", "data_type": "decimal", "is_key": false}
+      ]
+    },
+    {
+      "name": "Clientes",
+      "table_type": "dimension",
+      "columns": [
+        {"name": "IdCliente", "data_type": "int64", "is_key": true},
+        {"name": "NombreCliente", "data_type": "string", "is_key": false},
+        {"name": "Ciudad", "data_type": "string", "is_key": false},
+        {"name": "Pais", "data_type": "string", "is_key": false},
+        {"name": "SegmentoCliente", "data_type": "string", "is_key": false}
+      ]
+    },
+    {
+      "name": "Calendario",
+      "table_type": "dimension",
+      "columns": [
+        {"name": "IdFecha", "data_type": "int64", "is_key": true},
+        {"name": "Fecha", "data_type": "dateTime", "is_key": false},
+        {"name": "Anio", "data_type": "int64", "is_key": false},
+        {"name": "Mes", "data_type": "int64", "is_key": false},
+        {"name": "Trimestre", "data_type": "int64", "is_key": false}
+      ]
+    },
+    {
+      "name": "Tiendas",
+      "table_type": "dimension",
+      "columns": [
+        {"name": "IdTienda", "data_type": "int64", "is_key": true},
+        {"name": "NombreTienda", "data_type": "string", "is_key": false},
+        {"name": "Ciudad", "data_type": "string", "is_key": false},
+        {"name": "Region", "data_type": "string", "is_key": false}
+      ]
+    }
+  ],
+  "relationships": [
+    {"from_table": "Ventas", "from_column": "IdProducto", "to_table": "Productos", "to_column": "IdProducto", "cardinality": "manyToOne"},
+    {"from_table": "Ventas", "from_column": "IdCliente", "to_table": "Clientes", "to_column": "IdCliente", "cardinality": "manyToOne"},
+    {"from_table": "Ventas", "from_column": "IdTienda", "to_table": "Tiendas", "to_column": "IdTienda", "cardinality": "manyToOne"},
+    {"from_table": "Ventas", "from_column": "IdFecha", "to_table": "Calendario", "to_column": "IdFecha", "cardinality": "manyToOne"}
+  ],
+  "measures": [
+    {"name": "Total Ventas", "expression": "SUM(Ventas[ImporteTotal])", "table": "Ventas"},
+    {"name": "Cantidad Total", "expression": "SUM(Ventas[Cantidad])", "table": "Ventas"},
+    {"name": "Ventas Anio Anterior", "expression": "CALCULATE([Total Ventas], SAMEPERIODLASTYEAR(Calendario[Fecha]))", "table": "Ventas"},
+    {"name": "Ticket Promedio", "expression": "DIVIDE([Total Ventas], [Cantidad Total])", "table": "Ventas"}
+  ]
+}
