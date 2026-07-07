@@ -21,3 +21,4 @@ htmlcov/
 # Sistema
 .DS_Store
 Thumbs.db
+docs/
