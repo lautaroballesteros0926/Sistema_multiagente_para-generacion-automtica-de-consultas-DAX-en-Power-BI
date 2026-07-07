@@ -1,0 +1,150 @@
+{
+  "backend": "local:llama3.1",
+  "total": 20,
+  "syntactically_valid": 20,
+  "pct_syntax_valid": 1.0,
+  "by_category": {
+    "agregacion_simple": {
+      "total": 4,
+      "valid": 4
+    },
+    "agregacion_con_filtro": {
+      "total": 4,
+      "valid": 4
+    },
+    "inteligencia_temporal": {
+      "total": 4,
+      "valid": 4
+    },
+    "cruce_tablas": {
+      "total": 4,
+      "valid": 4
+    },
+    "reutilizacion_medidas": {
+      "total": 4,
+      "valid": 4
+    }
+  },
+  "per_question": [
+    {
+      "id": "q01",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Productos[Categoria],\n    \"Total Ventas\", CALCULATE(\n        SUM(Ventas[ImporteTotal]),\n        FILTER(\n            Ventas,\n            Ventas[IdProducto] = Productos[IdProducto]\n        )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q02",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( 'Ventas'[Cantidad] ),\n    ALL ( 'Ventas' )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q03",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Tiendas[NombreTienda],\n    \"Importe Total Vendido\", SUM(Ventas[ImporteTotal])\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q04",
+      "dax": "EVALUATE \nAVERAGEX(Productos, Productos[PrecioUnitario])",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q05",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( 'Ventas'[ImporteTotal] ),\n    FILTER (\n        'Ventas',\n        'Ventas'[IdProducto]\n            = CALCULATE (\n                VALUES ( 'Productos'[IdProducto] ),\n                'Productos'[Categoria] = \"Electrónica\"\n            )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q06",
+      "dax": "EVALUATE \nCALCULATE ( \n    COUNT(Ventas[IdVenta]), \n    FILTER( \n        Ventas, \n        Ventas[IdCliente] = EARLIER(Clientes[IdCliente]) && \n        Clientes[SegmentoCliente] = \"Premium\" \n    ) \n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q07",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( Ventas[ImporteTotal] ),\n    FILTER (\n        Ventas,\n        Tiendas[Region] = \"Norte\"\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q08",
+      "dax": "EVALUATE \nCALCULATE (\n    [Ticket Promedio],\n    FILTER (\n        Calendario,\n        Calendario[Anio] = 2024\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q09",
+      "dax": "EVALUATE \nCALCULATE (\n    [Total Ventas],\n    FILTER (\n        Ventas,\n        Calendario[Anio] = EARLIER ( Calendario[Anio] ) - 1\n    )\n) - \nCALCULATE (\n    [Total Ventas]\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q10",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( 'Ventas'[ImporteTotal] ),\n    FILTER (\n        'Calendario',\n        'Calendario'[Trimestre] = EARLIER ( 'Calendario'[Trimestre] )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q11",
+      "dax": "EVALUATE \nCALCULATE (\n    DIVIDE (\n        [Total Ventas],\n        [Ventas Anio Anterior]\n    ),\n    SAMEPERIODLASTYEAR ( Calendario[Fecha] )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q12",
+      "dax": "EVALUATE \nCALCULATE (\n    [Total Ventas],\n    FILTER (\n        Calendario,\n        AND (\n            Calendario[Anio] = 2023,\n            NOT ISBLANK(Calendario[Mes])\n        )\n    ),\n    ALLSELECTED (Ventas)\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q13",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Productos[NombreProducto],\n    Clientes[Ciudad],\n    \"Total Ventas\", CALCULATE(\n        SUM(Ventas[ImporteTotal]),\n        FILTER(\n            Ventas,\n            Ventas[IdCliente] = Clientes[IdCliente]\n                && Ventas[IdProducto] = Productos[IdProducto]\n                && Ventas[IdTienda] = Tiendas[IdTienda]\n        )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q14",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Tiendas[Region],\n    \"Categoria con mayor ventas\",\n    CALCULATE(\n        MAXX(Ventas, 'Productos'[Categoria]),\n        FILTER(\n            Ventas,\n            Ventas[IdTienda] = EARLIER(Tiendas[IdTienda])\n        )\n    ),\n    \"Cantidad de ventas en la categoria\",\n    CALCULATE(\n        SUM(Ventas[Cantidad]),\n        FILTER(\n            Ventas,\n            Ventas[IdTienda] = EARLIER(Tiendas[IdTienda]) &&\n            Ventas[IdProducto] = EARLIER(Ventas[IdProducto])\n        )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q15",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Clientes[NombreCliente],\n    Calendario[Anio],\n    \"Total Ventas\", SUM(Ventas[ImporteTotal])\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q16",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Tiendas[NombreTienda],\n    \"Subcategoria\",\n    Productos[Subcategoria],\n    \"Cantidad\",\n    SUM(Ventas[Cantidad])\n)\nGROUPBY(\n    'Tabla',\n    'Tabla'[NombreTienda],\n    'Tabla'[Subcategoria]\n)\nHAVING (\n    COUNTROWS('Tabla') > 1\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q17",
+      "dax": "EVALUATE \nCALCULATE (\n    AVERAGEX (\n        SUMMARIZE (\n            Productos,\n            \"Categoria\",\n            \"Ticket Promedio Por Categoria\"\n        ),\n        DIVIDE (\n            [Total Ventas],\n            [Cantidad Total]\n        )\n    ),\n    FILTER (\n        Ventas,\n        Ventas[IdProducto] = Productos[IdProducto]\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q18",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Tiendas[NombreTienda],\n    \"Cantidad Total\", SUM(Ventas[Cantidad]),\n    \"Total Ventas\", SUM(Ventas[ImporteTotal])\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q19",
+      "dax": "EVALUATE \nCALCULATE (\n    AVERAGEX (\n        SUMMARIZE (\n            'Ventas',\n            'Productos'[Categoria],\n            \"TicketPromedioActual\", [Ticket Promedio]\n        ),\n        IF (\n            [Ticket Promedio] > [Ventas Anio Anterior],\n            \"Mayor\",\n            IF (\n                [Ticket Promedio] < [Ventas Anio Anterior],\n                \"Menor\",\n                \"Igual\"\n            )\n        )\n    )\n)",
+      "valid": true,
+      "error": null
+    },
+    {
+      "id": "q20",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    'Ventas',\n    \"Total Ventas\", [Total Ventas],\n    \"Cantidad Total\", [Cantidad Total],\n    \"Ticket Promedio\", [Ticket Promedio]\n)",
+      "valid": true,
+      "error": null
+    }
+  ]
+}
