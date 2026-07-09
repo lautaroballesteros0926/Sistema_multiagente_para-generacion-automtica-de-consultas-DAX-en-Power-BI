@@ -25,7 +25,10 @@ Usuario -> API -> Orquestador -> [Generador] -> [Evaluador] -> ¿decisión?
 ## Requisitos
 
 - Python 3.11+
-- Una clave de OpenAI (desde el Día 3)
+- Una clave de Gemini (`GEMINI_API_KEY`) — proveedor de LLM por defecto.
+  Sin ella, el sistema cae automáticamente a un modelo local vía
+  [Ollama](https://ollama.com) (ver `config/settings.py`), útil para
+  desarrollar sin costo mientras se configura la key.
 - Power BI Premium con XMLA (opcional; por defecto se usa un modelo simulado)
 
 ## Instalación
@@ -41,8 +44,11 @@ cp .env.example .env      # y rellena tus valores
 ## Ejecución
 
 ```bash
-# Verificación del Día 1 (modelos y configuración)
-python -m tests.test_dia1
+# Verificación de modelos y configuración
+python -m tests.test
+
+# Suite de tests (MCP, generador, evaluador — todo mockeado, sin llamar a un LLM real)
+python -m pytest tests/ -v
 ```
 
 Las instrucciones de ejecución del sistema completo (servidor MCP + API) se
