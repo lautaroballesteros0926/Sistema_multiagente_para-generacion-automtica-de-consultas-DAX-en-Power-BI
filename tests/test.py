@@ -25,7 +25,7 @@ def probar_configuracion() -> None:
     assert settings.max_iterations == 3
     assert settings.use_mock is True
     assert 0.0 <= settings.accept_threshold <= 1.0
-    print(f"  [config] OK  -> modelo={settings.openai_model}, max_iter={settings.max_iterations}, mock={settings.use_mock}")
+    print(f"  [config] OK  -> modelo={settings.generator_model}, max_iter={settings.max_iterations}, mock={settings.use_mock}")
 
 
 def probar_logging() -> None:

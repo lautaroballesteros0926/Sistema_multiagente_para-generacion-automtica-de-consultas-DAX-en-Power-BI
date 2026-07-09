@@ -16,7 +16,7 @@ Usamos `pydantic-settings`, que:
 Cualquier módulo del proyecto obtiene la configuración así:
 
     from config.settings import settings
-    print(settings.openai_model)
+    print(settings.generator_model)
 
 """
 
@@ -36,18 +36,24 @@ class Settings(BaseSettings):
     )
 
     # =========================================================================
-    # 1) OpenAI (el LLM que usan los agentes)
+    # 1) LLM principal: Gemini. Si falla (sin API key, rate limit, sin
+    #    conexión...), BaseAgent cae automáticamente al modelo local (abajo).
     # =========================================================================
-    openai_api_key: str = ""
-    openai_model: str = "gpt-4o"          # Modelo para el generador
-    evaluator_model: str = "gpt-4o"       # Modelo para el evaluador (puede ser distinto)
+    gemini_api_key: str = ""              # se lee de GEMINI_API_KEY en .env
+    generator_model: str = "gemini-2.5-flash"
+    evaluator_model: str = "gemini-2.5-flash"   # puede ser distinto del generador
     generator_temperature: float = 0.2    # Baja: respuestas precisas y estables
     evaluator_temperature: float = 0.0    # Cero: evaluación determinista y consistente
 
-    # URL base opcional para el cliente OpenAI. None = endpoint real de OpenAI.
-    # Permite apuntar el mismo AsyncOpenAI a un servidor compatible (p. ej.
-    # Ollama en http://localhost:11434/v1) sin tocar el código de los agentes.
-    openai_base_url: str | None = None
+    # =========================================================================
+    # 1b) Respaldo local (Ollama, servidor compatible con la API de OpenAI).
+    #     Se usa automáticamente cuando falla la llamada a Gemini, para que
+    #     el sistema nunca quede completamente bloqueado por falta de API key
+    #     o conectividad.
+    # =========================================================================
+    local_model: str = "llama3.1"
+    local_base_url: str = "http://localhost:11434/v1"
+    local_api_key: str = "ollama-local"   # Ollama ignora el valor, solo exige que no esté vacío
 
     # =========================================================================
     # 2) Power BI / Azure AD

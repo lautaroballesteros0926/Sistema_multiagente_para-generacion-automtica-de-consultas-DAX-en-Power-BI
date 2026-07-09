@@ -16,15 +16,16 @@ log = get_logger(__name__)
 
 
 def _backend_label() -> str:
-    prefix = "openai" if not settings.openai_base_url else "local"
-    return f"{prefix}:{settings.openai_model}"
+    if settings.gemini_api_key:
+        return f"gemini:{settings.generator_model}"
+    return f"local:{settings.local_model}"
 
 
 async def main() -> None:
     configure_logging()
     corpus = json.loads(CORPUS_PATH.read_text(encoding="utf-8"))
 
-    agent = GeneratorAgent(model=settings.openai_model, temperature=settings.generator_temperature)
+    agent = GeneratorAgent(model=settings.generator_model, temperature=settings.generator_temperature)
     per_question = []
     by_category: dict[str, dict[str, int]] = defaultdict(lambda: {"total": 0, "valid": 0})
 
