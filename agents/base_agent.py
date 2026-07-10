@@ -34,8 +34,13 @@ class BaseAgent:
         self.model = model
         self.temperature = temperature
 
-        self._gemini = genai.Client(api_key=settings.gemini_api_key) if settings.gemini_api_key else None
-        self._local = AsyncOpenAI(api_key=settings.local_api_key, base_url=settings.local_base_url)
+        gemini_http_options = genai_types.HttpOptions(timeout=60_000)
+        self._gemini = (
+            genai.Client(api_key=settings.gemini_api_key, http_options=gemini_http_options)
+            if settings.gemini_api_key
+            else None
+        )
+        self._local = AsyncOpenAI(api_key=settings.local_api_key, base_url=settings.local_base_url, timeout=90.0)
 
         self._session: ClientSession | None = None
         self._exit_stack = AsyncExitStack()
