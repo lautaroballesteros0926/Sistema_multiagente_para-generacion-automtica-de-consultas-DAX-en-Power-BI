@@ -40,8 +40,10 @@ class Settings(BaseSettings):
     #    conexión...), BaseAgent cae automáticamente al modelo local (abajo).
     # =========================================================================
     gemini_api_key: str = ""              # se lee de GEMINI_API_KEY en .env
-    generator_model: str = "gemini-2.5-flash"
-    evaluator_model: str = "gemini-2.5-flash"   # puede ser distinto del generador
+    # Alias mantenido por Google que apunta siempre al modelo flash vigente
+    # (evita fijar una versión puntual que Google puede retirar más adelante).
+    generator_model: str = "gemini-flash-latest"
+    evaluator_model: str = "gemini-flash-latest"   # puede ser distinto del generador
     generator_temperature: float = 0.2    # Baja: respuestas precisas y estables
     evaluator_temperature: float = 0.0    # Cero: evaluación determinista y consistente
 
