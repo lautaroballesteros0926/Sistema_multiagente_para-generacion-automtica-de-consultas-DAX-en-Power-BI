@@ -1,0 +1,19 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      # Dentro del contenedor, "localhost" es el propio contenedor, no la
+      # máquina anfitriona donde corre Ollama. host.docker.internal es el
+      # nombre especial que Docker Desktop (Windows/Mac) resuelve hacia el
+      # host — necesario para que el respaldo local siga funcionando.
+      LOCAL_BASE_URL: http://host.docker.internal:11434/v1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
