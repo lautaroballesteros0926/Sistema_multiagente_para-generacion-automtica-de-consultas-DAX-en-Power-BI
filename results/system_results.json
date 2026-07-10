@@ -1,0 +1,263 @@
+{
+  "backend": "gemini:gemini-flash-latest",
+  "total": 20,
+  "syntactically_valid": 19,
+  "pct_syntax_valid": 0.95,
+  "avg_score": 0.77,
+  "avg_iterations": 1.4,
+  "pct_accepted": 0.75,
+  "errors_by_type": {
+    "fallo_parseo_evaluador": 1,
+    "rechazado_por_evaluador": 3,
+    "sintaxis_invalida": 1
+  },
+  "by_category": {
+    "agregacion_simple": {
+      "total": 4,
+      "valid": 4,
+      "accepted": 3
+    },
+    "agregacion_con_filtro": {
+      "total": 4,
+      "valid": 4,
+      "accepted": 4
+    },
+    "inteligencia_temporal": {
+      "total": 4,
+      "valid": 4,
+      "accepted": 4
+    },
+    "cruce_tablas": {
+      "total": 4,
+      "valid": 3,
+      "accepted": 1
+    },
+    "reutilizacion_medidas": {
+      "total": 4,
+      "valid": 4,
+      "accepted": 3
+    }
+  },
+  "per_question": [
+    {
+      "id": "q01",
+      "category": "agregacion_simple",
+      "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n    Productos[Categoria],\n    \"Total Ventas\", [Total Ventas]\n)",
+      "score": 0.0,
+      "decision": "REJECT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "No se pudo interpretar la respuesta del evaluador como JSON válido.",
+      "error_type": "fallo_parseo_evaluador"
+    },
+    {
+      "id": "q02",
+      "category": "agregacion_simple",
+      "dax": "EVALUATE\nROW(\n    \"Cantidad Total\", [Cantidad Total]\n)",
+      "score": 1.0,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q03",
+      "category": "agregacion_simple",
+      "dax": "EVALUATE\nSUMMARIZECOLUMNS(\n    Tiendas[NombreTienda],\n    \"Total Ventas\", [Total Ventas]\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q04",
+      "category": "agregacion_simple",
+      "dax": "EVALUATE \nCALCULATE ( AVERAGE ( Productos[PrecioUnitario] ) , FILTER ( Productos , NOT ISBLANK ( Productos[NombreProducto] ) ) )",
+      "score": 0.8,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q05",
+      "category": "agregacion_con_filtro",
+      "dax": "EVALUATE\nROW(\n    \"Total Ventas Electrónica\",\n    CALCULATE(\n        [Total Ventas],\n        Productos[Categoria] = \"Electrónica\"\n    )\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q06",
+      "category": "agregacion_con_filtro",
+      "dax": "EVALUATE \nCALCULATE ( \n    COUNT(Ventas[IdVenta]), \n    FILTER( \n        Ventas, \n        Ventas[IdCliente] = EARLIER(Clientes[IdCliente]) && Clientes[SegmentoCliente] = \"Premium\" \n    ) \n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q07",
+      "category": "agregacion_con_filtro",
+      "dax": "EVALUATE \nCALCULATE (\n    [Total Ventas],\n    FILTER (\n        Tiendas,\n        Tiendas[Region] = \"Norte\"\n    )\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q08",
+      "category": "agregacion_con_filtro",
+      "dax": "EVALUATE \nCALCULATE (\n    [Ticket Promedio],\n    FILTER (\n        Calendario,\n        Calendario[Anio] = 2024\n    )\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q09",
+      "category": "inteligencia_temporal",
+      "dax": "EVALUATE \nCALCULATE (\n    [Total Ventas],\n    FILTER (\n        Calendario,\n        Calendario[Fecha] <= TODAY () - 365\n    )\n) - \nCALCULATE (\n    [Ventas Anio Anterior],\n    FILTER (\n        Calendario,\n        Calendario[Fecha] <= TODAY () - 365\n    )\n)",
+      "score": 0.8,
+      "decision": "ACCEPT",
+      "iterations": 2,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q10",
+      "category": "inteligencia_temporal",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( 'Ventas'[ImporteTotal] ),\n    FILTER (\n        'Ventas',\n        'Ventas'[IdFecha] IN TOPN (\n            12,\n            'Calendario',\n            [Trimestre]\n        )\n    )\n)",
+      "score": 0.8,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q11",
+      "category": "inteligencia_temporal",
+      "dax": "EVALUATE \nCALCULATE (\n    DIVIDE (\n        [Total Ventas],\n        [Ventas Anio Anterior]\n    ),\n    SAMEPERIODLASTYEAR ( Calendario[Fecha] )\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q12",
+      "category": "inteligencia_temporal",
+      "dax": "EVALUATE \nCALCULATE (\n    [Total Ventas],\n    FILTER (\n        Calendario,\n        AND (\n            Calendario[Anio] = 2023,\n            Calendario[Mes] IN {1,2,3,4,5,6,7,8,9,10,11,12}\n        )\n    )\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q13",
+      "category": "cruce_tablas",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( Ventas[ImporteTotal] ),\n    FILTER (\n        Ventas,\n        Ventas[IdProducto] = EARLIER ( Ventas[IdProducto] )\n            && Ventas[IdCliente] = EARLIER ( Ventas[IdCliente] )\n            && Tiendas[NombreTienda] = EARLIER ( Tiendas[NombreTienda] )\n            && Clientes[Ciudad] = EARLIER ( Clientes[Ciudad] )\n    ),\n    ALLEXCEPT (\n        Ventas,\n        Productos[NombreProducto],\n        Clientes[Ciudad]\n    )\n)",
+      "score": 0.7,
+      "decision": "REJECT",
+      "iterations": 3,
+      "syntax_valid": true,
+      "explanation": "La consulta DAX generada no es completamente coherente con la pregunta formulada.",
+      "error_type": "rechazado_por_evaluador"
+    },
+    {
+      "id": "q14",
+      "category": "cruce_tablas",
+      "dax": "EVALUATE \n\nVAR CategoriasVendidasPorRegion = \n    SUMMARIZE(\n        CROSSFILTER(\n            Ventas,\n            Productos,\n            Ventas[IdProducto] = Productos[IdProducto]\n        ),\n        \"Categoría\", Productos[Categoria],\n        \"Región de Tienda\", Tiendas[Region]\n    )\n\nVAR TotalVentasPorCategoriaYRegion = \n    SUMMARIZE(\n        CROSSFILTER(\n            Ventas,\n            Productos,\n            Ventas[IdProducto] = Productos[IdProducto]\n        ),\n        \"Categoría\", Productos[Categoria],\n        \"Región de Tienda\", Tiendas[Region],\n        \"Total Ventas\", [Total Ventas]\n    )\n\nVAR Resultado = \n    ADDCOLUMNS(\n        CategoriasVendidasPorRegion,\n        \"Ventas Totales\", CALCULATE([Total Ventas], FILTER(TotalVentasPorCategoriaYRegion, TotalVentasPorCategoriaYRegion[Categoría] = CategoríasVendidasPorRegion[Categoría] && TotalVentasPorCategoriaYRegion[Región de Tienda] = CategoríasVendidasPorRegion[Región de Tienda]))\n    )\n\nRETURN \n    TOPN(\n        10,\n        Resultado,\n        \"Ventas Totales\",\n        DESC\n    )",
+      "score": 0.2,
+      "decision": "REJECT",
+      "iterations": 2,
+      "syntax_valid": false,
+      "explanation": "La consulta DAX tiene errores de sintaxis y semántica.",
+      "error_type": "sintaxis_invalida"
+    },
+    {
+      "id": "q15",
+      "category": "cruce_tablas",
+      "dax": "EVALUATE \nCALCULATE (\n    SUM ( 'Ventas'[ImporteTotal] ),\n    FILTER (\n        'Ventas',\n        'Clientes'[Pais] = SELECTEDVALUE ( 'Clientes'[Pais] )\n            && 'Calendario'[Anio] = SELECTEDVALUE ( 'Calendario'[Anio] )\n    )\n)",
+      "score": 0.8,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q16",
+      "category": "cruce_tablas",
+      "dax": "EVALUATE \nVAR CantidadTotalPorSubcategoria = CALCULATE(\n    [Cantidad Total],\n    'Ventas',\n    FILTER(\n        'Productos',\n        'Productos'[Subcategoria] IN VALUES('Productos'[Subcategoria])\n    )\n)\nRETURN \nCALCULATE(\n    MAXX(\n        SUMMARIZE(\n            'Ventas',\n            'Ventas'[IdTienda],\n            \"CantidadTotalPorSubcategoria\", CantidadTotalPorSubcategoria\n        ),\n        [CantidadTotalPorSubcategoria]\n    ),\n    'Ventas'[IdTienda]\n)",
+      "score": 0.7,
+      "decision": "REJECT",
+      "iterations": 3,
+      "syntax_valid": true,
+      "explanation": "La consulta DAX responde a la pregunta de manera parcialmente correcta, pero puede ser optimizada para mejorar su eficiencia y completitud.",
+      "error_type": "rechazado_por_evaluador"
+    },
+    {
+      "id": "q17",
+      "category": "reutilizacion_medidas",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Productos[Categoria],\n    \"TicketPromedioCategoria\", \n    AVERAGEX(Ventas, DIVIDE([Total Ventas], [Cantidad Total]))\n)",
+      "score": 0.8,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q18",
+      "category": "reutilizacion_medidas",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    Tiendas[NombreTienda],\n    \"Cantidad Total\", SUM(Ventas[Cantidad]),\n    \"Total Ventas\", SUM(Ventas[ImporteTotal])\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    },
+    {
+      "id": "q19",
+      "category": "reutilizacion_medidas",
+      "dax": "EVALUATE \nCALCULATE (\n    [Ticket Promedio],\n    FILTER (\n        Productos,\n        Productos[Categoria] = EARLIER ( Productos[Categoria] )\n    ),\n    FILTER (\n        Ventas,\n        Ventas[IdProducto] = EARLIER ( Ventas[IdProducto] )\n        && Ventas[Fecha] >= DATEADD ( EARLIER ( Calendario[Fecha] ), -1, YEAR )\n    )\n) - \nCALCULATE (\n    [Ticket Promedio],\n    FILTER (\n        Productos,\n        Productos[Categoria] = EARLIER ( Productos[Categoria] )\n    ),\n    FILTER (\n        Ventas,\n        Ventas[IdProducto] = EARLIER ( Ventas[IdProducto] )\n        && Ventas[Fecha] >= DATEADD ( EARLIER ( Calendario[Fecha] ), -1, YEAR )\n        && Ventas[Fecha] < DATEADD ( EARLIER ( Calendario[Fecha] ), -1, YEAR ) + 1\n    ),\n    FILTER (\n        Calendario,\n        Calendario[Anio] = EARLIER ( Calendario[Anio] ) - 1\n    )\n)",
+      "score": 0.7,
+      "decision": "REJECT",
+      "iterations": 3,
+      "syntax_valid": true,
+      "explanation": "La consulta DAX generada no es eficiente y no cubre todos los elementos de la pregunta.",
+      "error_type": "rechazado_por_evaluador"
+    },
+    {
+      "id": "q20",
+      "category": "reutilizacion_medidas",
+      "dax": "EVALUATE \nSUMMARIZECOLUMNS(\n    'Ventas',\n    \"Total Ventas\", SUM('Ventas'[ImporteTotal]),\n    \"Cantidad Total\", SUM('Ventas'[Cantidad]),\n    \"Ticket Promedio\", DIVIDE(SUM('Ventas'[ImporteTotal]), SUM('Ventas'[Cantidad]))\n)",
+      "score": 0.9,
+      "decision": "ACCEPT",
+      "iterations": 1,
+      "syntax_valid": true,
+      "explanation": "",
+      "error_type": null
+    }
+  ]
+}
