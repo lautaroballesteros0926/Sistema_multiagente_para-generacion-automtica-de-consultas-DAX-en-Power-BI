@@ -26,7 +26,7 @@ El generador y el evaluador llaman a un LLM a través de `BaseAgent`. El
 proveedor por defecto es **Gemini**; si falla (sin API key, sin cuota, sin
 conexión), el sistema cae automáticamente a un modelo **local vía Ollama**,
 sin necesidad de tocar código. Ver la sección "Usar solo el modelo local"
-más abajo si querés correr todo sin depender de Gemini.
+más abajo si se desea correr todo sin depender de Gemini.
 
 ## Requisitos
 
@@ -112,7 +112,7 @@ EOF
 
 ## Usar solo el modelo local (sin Gemini)
 
-Si no querés depender de una API key ni de conexión a internet, el sistema
+Si no quieres depender de una API key ni de conexión a internet, el sistema
 puede correr **100% local** con [Ollama](https://ollama.com):
 
 1. Instalá Ollama y descargá un modelo (el proyecto se probó con `llama3.1`):
