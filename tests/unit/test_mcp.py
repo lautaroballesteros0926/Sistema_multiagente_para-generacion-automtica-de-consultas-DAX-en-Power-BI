@@ -67,6 +67,24 @@ async def test_validate_dax_rejects_unknown_table(client: PowerBIClient) -> None
     assert "Inexistente" in result["error"]
 
 
+async def test_validate_dax_accepts_single_quoted_table(client: PowerBIClient) -> None:
+    result = await client.validate_dax("EVALUATE ROW(\"x\", 'Ventas'[ImporteTotal])")
+    assert result["valid"] is True
+    assert result["error"] is None
+
+
+async def test_validate_dax_rejects_single_quoted_unknown_table(client: PowerBIClient) -> None:
+    result = await client.validate_dax("EVALUATE ROW(\"x\", 'TablaFalsa'[Col])")
+    assert result["valid"] is False
+    assert "TablaFalsa" in result["error"]
+
+
+async def test_validate_dax_rejects_double_quoted_table(client: PowerBIClient) -> None:
+    result = await client.validate_dax('EVALUATE ROW("x", "Productos"[Categoria])')
+    assert result["valid"] is False
+    assert "comillas dobles" in result["error"]
+
+
 async def test_execute_query_fabricates_rows_for_valid_query(client: PowerBIClient) -> None:
     result = await client.execute_query(VALID_QUERY, max_rows=3)
     assert result["error"] is None
@@ -79,6 +97,16 @@ async def test_execute_query_returns_error_for_invalid_query(client: PowerBIClie
     result = await client.execute_query('SUMMARIZECOLUMNS(Productos[Categoria])')
     assert result["row_count"] == 0
     assert result["error"] is not None
+
+
+async def test_execute_query_fabricates_rows_for_single_quoted_table(client: PowerBIClient) -> None:
+    query = 'EVALUATE SUMMARIZECOLUMNS(\'Productos\'[Categoria], "Total Ventas", [Total Ventas])'
+    result = await client.execute_query(query, max_rows=2)
+    assert result["error"] is None
+    for row in result["rows"]:
+        assert "Productos[Categoria]" in row
+        assert "[Total Ventas]" in row
+        assert "[Categoria]" not in row  # no debe duplicarse como medida espuria
 
 
 async def test_mcp_tool_wrappers_match_client_behavior() -> None:

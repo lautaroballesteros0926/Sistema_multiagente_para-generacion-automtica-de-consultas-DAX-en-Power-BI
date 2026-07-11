@@ -10,13 +10,29 @@ from config.settings import settings
 from models import SchemaContext
 from mcp_server.powerbi.models import ExecutionResult, ValidationResult
 
-# Tabla[Columna] pegado, sin espacio: distingue una referencia de columna real
-# de una medida entre corchetes como [Total Ventas].
-_COLUMN_REF = re.compile(r"(\w+)\[(\w+)\]")
-# [Nombre de medida]: corchetes NO precedidos por un carácter de palabra.
+# Tabla[Columna] o 'Tabla Con Espacios'[Columna]: ambas son sintaxis DAX
+# válida para referenciar una columna (las comillas simples son obligatorias
+# solo si el nombre tiene espacios, pero cualquier tabla puede escribirse
+# entre comillas). Se captura el nombre citado o el nombre pegado, nunca
+# los dos a la vez.
+_COLUMN_REF = re.compile(r"'([^']+)'\[(\w+)\]|(\w+)\[(\w+)\]")
+# "Tabla"[Columna]: las comillas dobles en DAX son para literales de texto,
+# no para identificadores — esto nunca es sintaxis válida de referencia.
+_DOUBLE_QUOTED_TABLE_REF = re.compile(r'"[^"]*"\[\w+\]')
+# [Nombre de medida]: corchetes NO precedidos por un carácter de palabra
+# (una comilla simple o doble tampoco cuenta como referencia pegada).
 _MEASURE_REF = re.compile(r"(?<!\w)\[([^\[\]]+)\]")
 
 _MOCK_ROW_COUNT = 5
+
+
+def _extract_column_refs(text: str) -> list[tuple[str, str]]:
+    """Devuelve pares (tabla, columna), soportando 'Tabla'[Col] y Tabla[Col]."""
+    return [
+        (quoted_table or plain_table, column)
+        for quoted_table, quoted_column, plain_table, plain_column in _COLUMN_REF.findall(text)
+        for column in [quoted_column or plain_column]
+    ]
 
 
 class PowerBIClient:
@@ -87,7 +103,13 @@ class PowerBIClient:
         if text.count("[") != text.count("]"):
             return ValidationResult(valid=False, error="Corchetes desbalanceados")
 
-        for table_name, _column_name in _COLUMN_REF.findall(text):
+        if _DOUBLE_QUOTED_TABLE_REF.search(text):
+            return ValidationResult(
+                valid=False,
+                error="Las tablas no se referencian con comillas dobles (son para literales de texto); usá 'Tabla'[Columna] o Tabla[Columna]",
+            )
+
+        for table_name, _column_name in _extract_column_refs(text):
             if schema.get_table(table_name) is None:
                 return ValidationResult(
                     valid=False,
@@ -97,8 +119,9 @@ class PowerBIClient:
         return ValidationResult(valid=True)
 
     def _fabricate_rows(self, query: str, schema: SchemaContext, max_rows: int) -> ExecutionResult:
-        column_refs = _COLUMN_REF.findall(query)
-        measure_refs = [name for name in _MEASURE_REF.findall(query) if name not in {t for t, _ in column_refs}]
+        column_refs = _extract_column_refs(query)
+        referenced_columns = {column for _, column in column_refs}
+        measure_refs = [name for name in _MEASURE_REF.findall(query) if name not in referenced_columns]
 
         row_count = min(max_rows, _MOCK_ROW_COUNT)
         rng = random.Random(hash(query) & 0xFFFFFFFF)
